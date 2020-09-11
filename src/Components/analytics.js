@@ -3,21 +3,23 @@ import dashboardStore from '../store/index.js';
 import { Navbar, Container, Row, Col, Card } from 'react-bootstrap';
 import _ from 'lodash';
 const Analytics = () => {
-  const [dashboardState, setDashboardState] = useState(dashboardStore.initialState);
+  const [data, setData] = useState({});
   useLayoutEffect(()=> {
-    const subs = dashboardStore.subscribe(setDashboardState);
     dashboardStore.init();
-    return () => subs.unsubscribe();
   },[]);
 
   useEffect(() => {
     // Taking time between 100 - 2000 ms
     const timeRange = Math.random() * (2000 - 100) + 100;
-    const { send } = dashboardStore;
     const interval = setInterval(()=>{
-      send();
-    }, timeRange)
+      dashboardStore.send.subscribe({
+        next(x) { setData(x) },
+        error(err) { console.error('something wrong occurred: ' + err); },
+        complete() { console.log('done'); }
+      });
+    }, timeRange);
     return () => clearInterval(interval);
+    
   },[])
 
   return (
@@ -35,15 +37,15 @@ const Analytics = () => {
                 <Container className="text-align-center">
                   <Row>
                     <Col sm="4">Temperature</Col>
-                    <Col sm="8">{dashboardState.system.temperature}</Col>
+                    <Col sm="8">{data.temperature}</Col>
                   </Row>
                   <Row>
                     <Col sm="4">Air pressure</Col>
-                    <Col sm="8">{dashboardState.system.airPressure}</Col>
+                    <Col sm="8">{data.airPressure}</Col>
                   </Row>
                   <Row>
                     <Col sm="4">Humidity</Col>
-                    <Col sm="8">{dashboardState.system.humidity}</Col>
+                    <Col sm="8">{data.humidity}</Col>
                   </Row>
                 </Container>
               </Card.Body>

@@ -1,11 +1,10 @@
-import { Subject } from 'rxjs';
-
+import { Observable } from 'rxjs';
 import EventEmitter from 'wolfy87-eventemitter'
+
 const temperature = new EventEmitter();
 const airPressure = new EventEmitter();
 const humidity = new EventEmitter();
 
-const subject = new Subject();
 
 const initialState = {
   system: {
@@ -19,8 +18,6 @@ let state = initialState;
 
 const dashboardStore = {
   init: () => {
-    state = {...state}
-    subject.next(state)
     temperature.on('data', (value)=>{
       state = {...state, system: {...state.system, temperature: value }}
     })
@@ -30,9 +27,21 @@ const dashboardStore = {
     humidity.on('data', (value)=>{
       state = {...state, system: {...state.system, humidity:value } }
     })
+  },
+  send: new Observable(subscriber => {
+    let temp = (Math.random() * 10).toFixed(2)
+    let pressure = state.system.airPressure
+    let hum = (Math.random() * 10).toFixed(2)
 
-    // Here Checking not available
-    const timeout = setTimeout(()=>{
+    // Checking for new values
+    if(temp !== state.system.temperature || pressure !== state.system.airPressure || hum !== state.system.humidity ){
+      temperature.emit('data', temp)
+      airPressure.emit('data', pressure) 
+      humidity.emit('data', hum)
+    }
+
+     // Here Checking for not available
+     const timeout = setTimeout(()=>{
       if(!state.system.temperature){
         state = {...state, system: {...state.system, temperature: 'N/A' }}
       }
@@ -43,24 +52,9 @@ const dashboardStore = {
         state = {...state, system: {...state.system, humidity: 'N/A' }}
       }
     }, 1000)
-    
 
-  },
-  subscribe: setState => subject.subscribe(setState),
-  
-  send: () => {
-    let temp = (Math.random() * 10).toFixed(2)
-    let pressure = state.system.airPressure
-    let hum = (Math.random() * 10).toFixed(2)
-    
-    // Checking for new values
-    if(temp !== state.system.temperature || pressure !== state.system.airPressure || hum !== state.system.humidity ){
-      temperature.emit('data', temp)
-      airPressure.emit('data', pressure) 
-      humidity.emit('data', hum)
-    }
-    subject.next(state);
-  },
+    subscriber.next(state.system);
+  }),
   initialState
 };
 

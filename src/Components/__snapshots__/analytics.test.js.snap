@@ -82,9 +82,7 @@ exports[`Test App should test Analytics component 1`] = `
                                 >
                                   <div
                                     className="col-sm-8"
-                                  >
-                                    0
-                                  </div>
+                                  />
                                 </Col>
                               </div>
                             </Row>
@@ -108,9 +106,7 @@ exports[`Test App should test Analytics component 1`] = `
                                 >
                                   <div
                                     className="col-sm-8"
-                                  >
-                                    0
-                                  </div>
+                                  />
                                 </Col>
                               </div>
                             </Row>
@@ -134,9 +130,7 @@ exports[`Test App should test Analytics component 1`] = `
                                 >
                                   <div
                                     className="col-sm-8"
-                                  >
-                                    0
-                                  </div>
+                                  />
                                 </Col>
                               </div>
                             </Row>
